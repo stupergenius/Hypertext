@@ -66,7 +66,12 @@ enum TagFormatter {
     
     static private func delimited(_ tag: String, delimiter: String) -> String {
         let range = NSMakeRange(0, tag.characters.count)
-        let regex = try! NSRegularExpression(pattern: "(.)(?=[A-Z])", options: [])
+        let pattern = "(.)(?=[A-Z])"
+        #if !os(Linux)
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+        #else
+        let regex = try! RegularExpression(pattern: pattern, options: [])
+        #endif
         return regex.stringByReplacingMatches(in: tag, options: [], range: range, withTemplate: "$1\(delimiter)").lowercased()
     }
 }
